@@ -25,7 +25,7 @@ cmds = [
 
 [phases.build]
 cmds = [
-  "npm run build"
+  "echo 'Assets already built and committed to Git - skipping npm run build'"
 ]
 
 [start]
