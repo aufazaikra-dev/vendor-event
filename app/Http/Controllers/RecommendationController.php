@@ -1,112 +1,77 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\Vendor;
 use App\Models\Category;
+use App\Services\SawService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class RecommendationController extends Controller
 {
-    public function index(Request $request)
-    {
-        $categories = Category::all();
-        // Daftar Kecamatan khusus Banda Aceh (Sesuai Revisi)
-        $kecamatans = [
-            'Baiturrahman', 'Banda Raya', 'Jaya Baru', 'Kuta Alam',
-            'Kuta Raja', 'Lueng Bata', 'Meuraxa', 'Syiah Kuala', 'Ulee Kareng'
-        ];
+    /**
+     * Inject SawService melalui constructor (Dependency Injection).
+     */
+    public function __construct(
+        private readonly SawService $sawService
+    ) {}
 
-        if (!$request->has('cari')) {
+    public function index(Request $request): \Illuminate\Contracts\View\View
+    {
+        $categories  = Cache::remember('categories_all', now()->addHours(6), fn () => Category::all());
+        $kecamatans  = SawService::KECAMATANS;
+
+        // Jika tidak ada input pencarian, tampilkan halaman awal
+        if (! $request->has('cari')) {
             return view('home', [
                 'categories' => $categories,
                 'kecamatans' => $kecamatans,
-                'old_input' => []
+                'old_input'  => [],
             ]);
         }
 
-        // ================= LOGIKA SAW FINAL =================
+        // --- Normalisasi Bobot dari Input Pengguna ---
+        $weights = $this->sawService->normalizeWeights(
+            bobotHarga:      (int) $request->input('bobot_harga', 50),
+            bobotRating:     (int) $request->input('bobot_rating', 30),
+            bobotPengalaman: (int) $request->input('bobot_pengalaman', 20),
+        );
 
-        $inputHarga = $request->input('bobot_harga', 50);
-        $inputRating = $request->input('bobot_rating', 30);
-        $inputPengalaman = $request->input('bobot_pengalaman', 20); // Diubah dari bobot_porto
+        // --- Bangun Cache Key unik berdasarkan filter & bobot ---
+        // Sehingga kombinasi filter yang sama tidak dihitung ulang.
+        $cacheKey = 'saw_result_' . md5(serialize($request->only([
+            'max_budget', 'kategori', 'kecamatan',
+            'bobot_harga', 'bobot_rating', 'bobot_pengalaman',
+        ])));
 
-        $totalBobot = $inputHarga + $inputRating + $inputPengalaman;
-        $w1 = $inputHarga / $totalBobot;
-        $w2 = $inputRating / $totalBobot;
-        $w3 = $inputPengalaman / $totalBobot;
+        $rekomendasi = Cache::remember($cacheKey, now()->addMinutes(15), function () use ($request, $weights) {
+            $vendors = $this->sawService->fetchFilteredVendors($request);
 
-        // AMBIL DATA & FILTER
-        $query = Vendor::with(['pricelists', 'reviews', 'transactions', 'address', 'category'])
-                        ->where('is_verified', true);
+            if ($vendors->isEmpty()) {
+                return null; // Sentinel untuk "tidak ada hasil"
+            }
 
-        // 1. Filter Budget
-        if ($request->filled('max_budget')) {
-            $budget = $request->input('max_budget');
-            $query->whereHas('pricelists', function ($q) use ($budget) {
-                $q->where('harga', '<=', $budget);
-            });
-        }
-
-        // 2. Filter Kategori
-        if ($request->filled('kategori')) {
-            $query->where('category_id', $request->input('kategori'));
-        }
-
-        // 3. Filter Kecamatan (Banda Aceh)
-        if ($request->filled('kecamatan')) {
-            $kecamatan = $request->input('kecamatan');
-            $query->whereHas('address', function ($q) use ($kecamatan) {
-                $q->where('kecamatan', $kecamatan);
-            });
-        }
-
-        $vendors = $query->get();
-
-        if ($vendors->isEmpty()) {
-            return view('home', [
-                'error' => 'Maaf, tidak ada vendor yang cocok dengan filter pencarian Anda.',
-                'old_input' => $request->all(),
-                'categories' => $categories,
-                'kecamatans' => $kecamatans
-            ]);
-        }
-
-        // MENCARI NILAI MAX & MIN UNTUK NORMALISASI
-        $minPrice = $vendors->map(fn($v) => $v->pricelists->min('harga') ?? 0)->filter()->min() ?: 1;
-        // THE GAME CHANGER: Hitung Max Pengalaman berdasarkan TRANSAKSI, bukan Portofolio!
-        $maxPengalaman = $vendors->map(fn($v) => $v->transactions->count())->max() ?: 1;
-        $maxRating = 5;
-
-        // RUMUS NORMALISASI DAN PERKALIAN BOBOT SAW
-        $hasil = $vendors->map(function ($vendor) use ($minPrice, $maxPengalaman, $maxRating, $w1, $w2, $w3) {
-            $harga = $vendor->pricelists->min('harga') ?? 0;
-            $rating = $vendor->reviews->avg('rating') ?? 0;
-            $pengalaman = $vendor->transactions->count(); // Ambil jumlah pemakaian jasa
-
-            $n1 = ($harga > 0) ? ($minPrice / $harga) : 0; // Cost
-            $n2 = $rating / $maxRating; // Benefit
-            $n3 = $pengalaman / $maxPengalaman; // Benefit
-
-            $skor = ($n1 * $w1) + ($n2 * $w2) + ($n3 * $w3);
-
-            return (object) [
-                'data' => $vendor,
-                'skor' => $skor,
-                'harga_tampil' => $harga,
-                'rating_tampil' => $rating,
-                'pengalaman_tampil' => $pengalaman
-            ];
+            return $this->sawService->calculate($vendors, $weights);
         });
 
-        $rekomendasi = $hasil->sortByDesc('skor');
+        // Jika null (dari cache), artinya tidak ada vendor
+        if ($rekomendasi === null) {
+            return view('home', [
+                'error'      => 'Maaf, tidak ada vendor yang cocok dengan filter pencarian Anda.',
+                'old_input'  => $request->all(),
+                'categories' => $categories,
+                'kecamatans' => $kecamatans,
+            ]);
+        }
 
         return view('home', [
-            'vendors' => $rekomendasi,
-            'old_input' => $request->all(),
-            'error' => null,
+            'vendors'    => $rekomendasi,
+            'old_input'  => $request->all(),
+            'error'      => null,
             'categories' => $categories,
-            'kecamatans' => $kecamatans
+            'kecamatans' => $kecamatans,
         ]);
     }
 }

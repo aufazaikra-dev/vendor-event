@@ -36,34 +36,40 @@ Route::middleware(['auth'])->group(function () {
     // -------------------------------------------------------
 
     // --- AREA VENDOR ---
-    Route::get('/vendor/dashboard', function () {
-        $vendor = auth()->user()->vendor;
-        // Ambil total paket dan rata-rata rating dari database
-        $total_paket = $vendor ? $vendor->pricelists()->count() : 0;
-        $rating = $vendor ? $vendor->reviews()->avg('rating') : 0;
+    Route::middleware(['role:vendor'])->group(function () {
+        Route::get('/vendor/dashboard', function () {
+            $vendor = auth()->user()->vendor;
+            // Ambil total paket dan rata-rata rating dari database
+            $total_paket = $vendor ? $vendor->pricelists()->count() : 0;
+            $rating = $vendor ? $vendor->reviews()->avg('rating') : 0;
 
-        return view('vendor.dashboard', compact('vendor', 'total_paket', 'rating'));
-    })->name('vendor.dashboard');
+            return view('vendor.dashboard', compact('vendor', 'total_paket', 'rating'));
+        })->name('vendor.dashboard');
 
-    Route::resource('vendor/paket', PricelistController::class);
-    Route::get('/vendor/profil', [VendorProfileController::class, 'edit'])->name('vendor.profile');
-    Route::put('/vendor/profil', [VendorProfileController::class, 'update'])->name('vendor.profile.update');
-    Route::resource('vendor/portofolio', ProjectController::class);
+        Route::resource('vendor/paket', PricelistController::class);
+        Route::get('/vendor/profil', [VendorProfileController::class, 'edit'])->name('vendor.profile');
+        Route::put('/vendor/profil', [VendorProfileController::class, 'update'])->name('vendor.profile.update');
+        Route::resource('vendor/portofolio', ProjectController::class);
+    });
 
     // --- AREA ADMIN ---
-    Route::get('/admin/dashboard', [\App\Http\Controllers\AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/admin/vendor', [\App\Http\Controllers\AdminController::class, 'vendors'])->name('admin.vendors');
-    Route::post('/admin/vendor/{id}/verify', [\App\Http\Controllers\AdminController::class, 'verify'])->name('admin.vendor.verify');
-    Route::post('/admin/vendor/{id}/unverify', [\App\Http\Controllers\AdminController::class, 'unverify'])->name('admin.vendor.unverify');
-    Route::get('/admin/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('admin.users');
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin/dashboard', [\App\Http\Controllers\AdminController::class, 'index'])->name('admin.dashboard');
+        Route::get('/admin/vendor', [\App\Http\Controllers\AdminController::class, 'vendors'])->name('admin.vendors');
+        Route::post('/admin/vendor/{id}/verify', [\App\Http\Controllers\AdminController::class, 'verify'])->name('admin.vendor.verify');
+        Route::post('/admin/vendor/{id}/unverify', [\App\Http\Controllers\AdminController::class, 'unverify'])->name('admin.vendor.unverify');
+        Route::get('/admin/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('admin.users');
+    });
 
     // --- TAMBAHAN FASE 2: RUTE TRANSAKSI & REVIEW ---
 
     // Rute Vendor: Kelola Pesanan & Balas Ulasan
-    Route::get('/vendor/pesanan', [\App\Http\Controllers\TransactionController::class, 'vendorIndex'])->name('vendor.transactions');
-    Route::post('/vendor/pesanan', [\App\Http\Controllers\TransactionController::class, 'vendorStore'])->name('vendor.transactions.store');
-    Route::put('/vendor/pesanan/{id}', [\App\Http\Controllers\TransactionController::class, 'vendorUpdateStatus'])->name('vendor.transactions.update');
-    Route::put('/vendor/review/{id}/reply', [\App\Http\Controllers\ReviewController::class, 'vendorReply'])->name('vendor.review.reply');
+    Route::middleware(['role:vendor'])->group(function () {
+        Route::get('/vendor/pesanan', [\App\Http\Controllers\TransactionController::class, 'vendorIndex'])->name('vendor.transactions');
+        Route::post('/vendor/pesanan', [\App\Http\Controllers\TransactionController::class, 'vendorStore'])->name('vendor.transactions.store');
+        Route::put('/vendor/pesanan/{id}', [\App\Http\Controllers\TransactionController::class, 'vendorUpdateStatus'])->name('vendor.transactions.update');
+        Route::put('/vendor/review/{id}/reply', [\App\Http\Controllers\ReviewController::class, 'vendorReply'])->name('vendor.review.reply');
+    });
 
     // Rute User (Pelanggan): Riwayat Pesanan & Form Ulasan
     Route::get('/user/pesanan', [\App\Http\Controllers\TransactionController::class, 'userIndex'])->name('user.transactions');

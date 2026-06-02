@@ -27,10 +27,42 @@
                 </header>
             @endisset
 
-            <!-- Page Content -->
             <main>
                 {{ $slot }}
             </main>
         </div>
+
+        <!-- SweetAlert2 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                @if(session('success'))
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: '{!! session('success') !!}',
+                        confirmButtonColor: '#B8860B'
+                    });
+                @endif
+
+                @if(session('error'))
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: '{!! session('error') !!}',
+                        confirmButtonColor: '#dc2626'
+                    });
+                @endif
+                
+                @if(session('status'))
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: '{!! session('status') !!}',
+                        confirmButtonColor: '#B8860B'
+                    });
+                @endif
+            });
+        </script>
     </body>
 </html>

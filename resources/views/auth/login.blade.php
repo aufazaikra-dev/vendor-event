@@ -1,56 +1,65 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <!-- Judul Card -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold mb-1" style="font-family: 'Playfair Display', serif; color: #1a1a2e;">Selamat Datang</h1>
+        <p class="text-sm" style="color: #7a7a9a;">Masuk ke akun EventVendor Anda</p>
+    </div>
 
-    <form method="POST" action="{{ route('login') }}">
+    <!-- Session Status handled by SweetAlert2 -->
+
+    <form method="POST" action="{{ route('login') }}" class="space-y-5">
         @csrf
 
-        <!-- Email Address -->
+        <!-- Email -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <label class="auth-label" for="email">Email</label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}"
+                   class="auth-input" placeholder="nama@email.com" required autofocus autocomplete="username">
+            @error('email')
+                <p class="auth-error">{{ $message }}</p>
+            @enderror
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div>
+            <label class="auth-label" for="password">Password</label>
+            <input id="password" type="password" name="password"
+                   class="auth-input" placeholder="••••••••" required autocomplete="current-password">
+            @error('password')
+                <p class="auth-error">{{ $message }}</p>
+            @enderror
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
+        <!-- Remember Me + Forgot -->
+        <div class="flex items-center justify-between">
+            <label class="flex items-center gap-2 cursor-pointer">
+                <input id="remember_me" type="checkbox" class="auth-checkbox" name="remember">
+                <span class="text-s" style="color: #4a4a6a;">Ingat saya</span>
             </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
+                <a href="{{ route('password.request') }}" class="auth-btn-secondary text-s">
+                    Lupa password?
                 </a>
             @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
         </div>
 
-        <div class="mt-5 text-center border-t pt-4">
-            <span class="text-sm text-gray-600">Belum punya akun? </span>
-            <a href="{{ route('register') }}" class="text-sm font-bold text-indigo-600 hover:text-indigo-900 underline">
-                Daftar Sekarang di Sini
-            </a>
-            <br><br>
-            <span class="text-xs text-gray-400">Atau ingin mendaftar sebagai Vendor? <a href="{{ route('vendor.register') }}" class="text-indigo-500 underline">Klik di sini</a></span>
-        </div>
+        <!-- Submit -->
+        <button type="submit" class="auth-btn-primary mt-2">
+            Masuk Sekarang
+        </button>
     </form>
+
+    <hr class="auth-divider">
+
+    <!-- Register links -->
+    <div class="text-center space-y-2">
+        <p class="text-s" style="color: #4a4a6a;">
+            Belum punya akun?
+            <a href="{{ route('register') }}" style="color: #B8860B; font-weight: 600;">Daftar di sini</a>
+        </p>
+        <p class="text-s" style="color: #7a7a9a;">
+            Ingin bergabung sebagai Vendor?
+            <a href="{{ route('vendor.register') }}" style="color: #B8860B; font-weight: 500;">Klik di sini</a>
+        </p>
+    </div>
 </x-guest-layout>

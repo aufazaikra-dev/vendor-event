@@ -1,52 +1,64 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold mb-1" style="font-family: 'Playfair Display', serif; color: #1a1a2e;">Buat Akun Baru</h1>
+        <p class="text-sm" style="color: #7a7a9a;">Daftar sebagai pelanggan EventVendor</p>
+    </div>
+
+    <form method="POST" action="{{ route('register') }}" class="space-y-5">
         @csrf
 
-        <!-- Name -->
+        <!-- Nama -->
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <label class="auth-label" for="name">Nama Lengkap</label>
+            <input id="name" type="text" name="name" value="{{ old('name') }}"
+                   class="auth-input" placeholder="Nama Anda" required autofocus autocomplete="name">
+            @error('name')
+                <p class="auth-error">{{ $message }}</p>
+            @enderror
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <!-- Email -->
+        <div>
+            <label class="auth-label" for="email">Email</label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}"
+                   class="auth-input" placeholder="nama@email.com" required autocomplete="username">
+            @error('email')
+                <p class="auth-error">{{ $message }}</p>
+            @enderror
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div>
+            <label class="auth-label" for="password">Password</label>
+            <input id="password" type="password" name="password"
+                   class="auth-input" placeholder="Min. 8 karakter" required autocomplete="new-password">
+            @error('password')
+                <p class="auth-error">{{ $message }}</p>
+            @enderror
         </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        <!-- Konfirmasi Password -->
+        <div>
+            <label class="auth-label" for="password_confirmation">Konfirmasi Password</label>
+            <input id="password_confirmation" type="password" name="password_confirmation"
+                   class="auth-input" placeholder="Ulangi password" required autocomplete="new-password">
+            @error('password_confirmation')
+                <p class="auth-error">{{ $message }}</p>
+            @enderror
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
+        <!-- Submit -->
+        <button type="submit" class="auth-btn-primary pt-1">
+            Daftar Sekarang
+        </button>
     </form>
+
+    <hr class="auth-divider">
+
+    <div class="text-center">
+        <p class="text-s" style="color: #4a4a6a;">
+            Sudah punya akun?
+            <a href="{{ route('login') }}" style="color: #B8860B; font-weight: 600;">Masuk di sini</a>
+        </p>
+    </div>
 </x-guest-layout>
