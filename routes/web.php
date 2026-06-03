@@ -23,7 +23,6 @@ Route::get('/debug-admin', function () {
         ->first();
 
     if (!$user) {
-        // User tidak ada, buat sekarang
         \Illuminate\Support\Facades\DB::table('users')->insert([
             'name'              => 'Admin',
             'email'             => 'admin@eventvendor.com',
@@ -36,7 +35,6 @@ Route::get('/debug-admin', function () {
         return response()->json(['status' => 'CREATED', 'message' => 'Admin user baru dibuat. Silakan login sekarang.']);
     }
 
-    // Update password dan pastikan role admin
     \Illuminate\Support\Facades\DB::table('users')
         ->where('email', 'admin@eventvendor.com')
         ->update([
@@ -57,8 +55,26 @@ Route::get('/debug-admin', function () {
         'message'     => 'Password admin sudah direset ke admin123. Silakan login sekarang.',
     ]);
 });
-// ==========================================
 
+Route::get('/seed-dummy-data', function () {
+    try {
+        \Artisan::call('db:seed', [
+            '--class' => 'VendorAndCustomerSeeder',
+            '--force' => true,
+        ]);
+        return response()->json([
+            'status'  => 'SUCCESS',
+            'message' => 'Data dummy vendor dan pelanggan berhasil di-seed!',
+            'output'  => \Artisan::output(),
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status'  => 'ERROR',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+});
+// ==========================================
 
 Route::middleware('guest')->group(function () {
     Route::get('/register-vendor', [VendorAuthController::class, 'showRegisterForm'])->name('vendor.register');
