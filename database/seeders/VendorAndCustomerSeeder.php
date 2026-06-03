@@ -222,7 +222,7 @@ class VendorAndCustomerSeeder extends Seeder
             $this->command->info("📂 Membuat vendor kategori: {$categoryName}");
 
             foreach ($vendors as $i => $vd) {
-                $email    = Str::slug(strtolower(explode(' ', $vd['name'])[0])) . '.' . Str::slug(strtolower(implode('.', array_slice(explode(' ', $vd['name']), 1)))) . '@gmail.com';
+                $email    = $vd['slug'] . '@gmail.com';
                 $password = strtolower(explode(' ', $vd['name'])[0]) . '123';
 
                 // Buat User

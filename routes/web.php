@@ -74,7 +74,29 @@ Route::get('/seed-dummy-data', function () {
         ], 500);
     }
 });
+
+Route::get('/list-vendor-credentials', function () {
+    $vendors = \Illuminate\Support\Facades\DB::table('users')
+        ->where('role', 'vendor')
+        ->orderBy('id')
+        ->get(['id', 'name', 'email']);
+
+    $list = $vendors->map(function ($u) {
+        $firstName = strtolower(explode(' ', $u->name)[0]);
+        return [
+            'nama'     => $u->name,
+            'email'    => $u->email,
+            'password' => $firstName . '123',
+        ];
+    });
+
+    return response()->json([
+        'total'   => $vendors->count(),
+        'vendors' => $list,
+    ], 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+});
 // ==========================================
+
 
 Route::middleware('guest')->group(function () {
     Route::get('/register-vendor', [VendorAuthController::class, 'showRegisterForm'])->name('vendor.register');
