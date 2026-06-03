@@ -85,6 +85,13 @@
                     <td style="font-weight:500;color:#1a1a2e;">{{ $trx->user->name ?? 'User Dihapus' }}</td>
                     <td style="color:#4a4a6a;font-size:14px;">{{ $trx->pricelist->nama_paket ?? 'Paket Dihapus' }}</td>
                     <td>
+                        @if($trx->status === 'selesai')
+                            {{-- Status selesai tidak bisa diubah lagi --}}
+                            <span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#dcfce7;color:#16a34a;border-radius:99px;font-size:12px;font-weight:700;border:1px solid #bbf7d0;">
+                                <svg style="width:12px;height:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                Selesai
+                            </span>
+                        @else
                         <form action="{{ route('vendor.transactions.update', $trx->id) }}" method="POST">
                             @csrf
                             @method('PUT')
@@ -95,6 +102,7 @@
                                 <option value="selesai" {{ $trx->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
                             </select>
                         </form>
+                        @endif
                     </td>
                     <td>
                         @if($trx->review)

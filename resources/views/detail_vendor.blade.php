@@ -6,6 +6,67 @@
         }
         .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .card-hover:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+
+        /* Portofolio Horizontal Scroll */
+        .porto-scroll-wrapper {
+            overflow-x: auto;
+            padding-bottom: 12px;
+            scrollbar-width: thin;
+            scrollbar-color: #C5A028 #f1ece0;
+        }
+        .porto-scroll-wrapper::-webkit-scrollbar { height: 6px; }
+        .porto-scroll-wrapper::-webkit-scrollbar-track { background: #f1ece0; border-radius: 99px; }
+        .porto-scroll-wrapper::-webkit-scrollbar-thumb { background: #C5A028; border-radius: 99px; }
+        .porto-scroll-inner {
+            display: flex;
+            gap: 20px;
+            width: max-content;
+        }
+        .porto-card {
+            width: 260px;
+            flex-shrink: 0;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid #f0f0f0;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .porto-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.13); }
+        .porto-card .porto-img { position: relative; height: 180px; overflow: hidden; }
+        .porto-card .porto-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .porto-card:hover .porto-img img { transform: scale(1.08); }
+        .porto-card .porto-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(17,24,39,0.75), transparent);
+            opacity: 0; transition: opacity 0.3s;
+            display: flex; align-items: flex-end; padding: 14px;
+        }
+        .porto-card:hover .porto-overlay { opacity: 1; }
+        .porto-card .porto-body { padding: 14px; }
+        .porto-card .porto-title { font-weight: 700; color: #1a1a2e; font-size: 14px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .porto-card .porto-desc { font-size: 12px; color: #6b7280; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* Balasan vendor di ulasan */
+        .review-reply {
+            margin-top: 12px;
+            padding: 12px 14px;
+            background: #FFFBF0;
+            border-left: 3px solid #C5A028;
+            border-radius: 0 12px 12px 0;
+        }
+        .review-reply-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #C5A028;
+            margin-bottom: 4px;
+        }
+        .review-reply-text {
+            font-size: 14px;
+            color: #4b5563;
+        }
     </style>
 
     <!-- Navbar Premium Sticky -->
@@ -82,37 +143,41 @@
                     </div>
                 </div>
 
-                <!-- Gallery Section -->
+                <!-- Gallery Section - Horizontal Scroll -->
                 <div>
-                    <h3 class="text-3xl font-serif text-charcoal font-bold mb-8">Galeri Portofolio</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        @php
-                            $photos = auth()->check() ? $vendor->projects : $vendor->projects->take(4);
-                            $totalPhotos = $vendor->projects->count();
-                        @endphp
+                    <h3 class="text-3xl font-serif text-charcoal font-bold mb-6">Galeri Portofolio</h3>
+                    @php
+                        $photos = auth()->check() ? $vendor->projects : $vendor->projects->take(4);
+                        $totalPhotos = $vendor->projects->count();
+                    @endphp
 
-                        @forelse($photos as $foto)
-                        <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden group card-hover">
-                            <div class="relative h-64 overflow-hidden">
-                                <img src="{{ asset('storage/' . $foto->cover_image) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Portofolio">
-                                <div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                                    <h5 class="text-white font-bold text-xl">{{ $foto->judul_project }}</h5>
+                    @if($photos->isEmpty())
+                    <div class="text-center py-10 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
+                        <p class="text-gray-500 text-lg">Belum ada foto portofolio.</p>
+                    </div>
+                    @else
+                    <div class="porto-scroll-wrapper">
+                        <div class="porto-scroll-inner">
+                            @foreach($photos as $foto)
+                            <div class="porto-card">
+                                <div class="porto-img">
+                                    <img src="{{ asset('storage/' . $foto->cover_image) }}" alt="{{ $foto->judul_project }}">
+                                    <div class="porto-overlay">
+                                        <span class="text-white font-bold text-sm">{{ $foto->judul_project }}</span>
+                                    </div>
+                                </div>
+                                <div class="porto-body">
+                                    <div class="porto-title">{{ $foto->judul_project }}</div>
+                                    <div class="porto-desc">{{ $foto->deskripsi }}</div>
                                 </div>
                             </div>
-                            <div class="p-5">
-                                <h6 class="font-bold text-charcoal text-lg mb-2">{{ $foto->judul_project }}</h6>
-                                <p class="text-gray-500 text-sm line-clamp-2">{{ $foto->deskripsi }}</p>
-                            </div>
+                            @endforeach
                         </div>
-                        @empty
-                        <div class="col-span-full text-center py-10 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
-                            <p class="text-gray-500 text-lg">Belum ada foto portofolio.</p>
-                        </div>
-                        @endforelse
                     </div>
+                    @endif
 
                     @if(!auth()->check() && $totalPhotos > 4)
-                    <div class="mt-10 text-center bg-champagne-light p-8 rounded-2xl border border-gold-200 shadow-inner">
+                    <div class="mt-8 text-center bg-champagne-light p-8 rounded-2xl border border-gold-200 shadow-inner">
                         <h5 class="text-2xl font-bold text-charcoal mb-3">Ada {{ $totalPhotos - 4 }} foto lainnya tersembunyi.</h5>
                         <p class="text-gray-600 text-lg mb-6">Login sekarang untuk melihat seluruh portofolio dan ulasan klien.</p>
                         <a href="{{ route('login') }}" class="inline-block px-8 py-4 bg-gold-500 text-white font-bold rounded-full hover:bg-gold-600 transition-colors shadow-lg">Daftar / Masuk Sekarang</a>
@@ -138,7 +203,16 @@
                                     <span class="font-bold text-charcoal">{{ $rev->rating }}/5</span>
                                 </div>
                             </div>
+                            {{-- Komentar pelanggan --}}
                             <p class="text-gray-600 text-lg italic leading-relaxed">"{{ $rev->komentar }}"</p>
+
+                            {{-- Balasan vendor (tampil ke publik) --}}
+                            @if($rev->balasan_vendor)
+                            <div class="review-reply">
+                                <div class="review-reply-label">💬 Balasan Vendor</div>
+                                <div class="review-reply-text">{{ $rev->balasan_vendor }}</div>
+                            </div>
+                            @endif
                         </div>
                         @empty
                         <div class="bg-gray-50 border border-gray-200 rounded-2xl p-8 text-center text-gray-500 text-lg">
