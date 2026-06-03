@@ -14,6 +14,52 @@ use App\Http\Controllers\AdminController;
 // ==========================================
 Route::get('/', [RecommendationController::class, 'index'])->name('home');
 
+// ==========================================
+// DEBUG ROUTE - HAPUS SETELAH SELESAI DEBUG
+// ==========================================
+Route::get('/debug-admin', function () {
+    $user = \Illuminate\Support\Facades\DB::table('users')
+        ->where('email', 'admin@eventvendor.com')
+        ->first();
+
+    if (!$user) {
+        // User tidak ada, buat sekarang
+        \Illuminate\Support\Facades\DB::table('users')->insert([
+            'name'              => 'Admin',
+            'email'             => 'admin@eventvendor.com',
+            'email_verified_at' => now(),
+            'password'          => \Illuminate\Support\Facades\Hash::make('admin123'),
+            'role'              => 'admin',
+            'created_at'        => now(),
+            'updated_at'        => now(),
+        ]);
+        return response()->json(['status' => 'CREATED', 'message' => 'Admin user baru dibuat. Silakan login sekarang.']);
+    }
+
+    // Update password dan pastikan role admin
+    \Illuminate\Support\Facades\DB::table('users')
+        ->where('email', 'admin@eventvendor.com')
+        ->update([
+            'password'          => \Illuminate\Support\Facades\Hash::make('admin123'),
+            'email_verified_at' => now(),
+            'role'              => 'admin',
+            'updated_at'        => now(),
+        ]);
+
+    return response()->json([
+        'status'      => 'UPDATED',
+        'user_found'  => true,
+        'id'          => $user->id,
+        'name'        => $user->name,
+        'email'       => $user->email,
+        'role'        => $user->role,
+        'verified_at' => $user->email_verified_at,
+        'message'     => 'Password admin sudah direset ke admin123. Silakan login sekarang.',
+    ]);
+});
+// ==========================================
+
+
 Route::middleware('guest')->group(function () {
     Route::get('/register-vendor', [VendorAuthController::class, 'showRegisterForm'])->name('vendor.register');
     Route::post('/register-vendor', [VendorAuthController::class, 'register']);
