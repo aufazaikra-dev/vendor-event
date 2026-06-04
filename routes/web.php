@@ -95,6 +95,48 @@ Route::get('/list-vendor-credentials', function () {
         'vendors' => $list,
     ], 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 });
+
+// DEBUG: Diagnosa error forgot password - HAPUS SETELAH SELESAI
+Route::get('/debug-mail', function () {
+    $info = [
+        'MAIL_MAILER'      => config('mail.default'),
+        'MAIL_HOST'        => config('mail.mailers.smtp.host'),
+        'MAIL_PORT'        => config('mail.mailers.smtp.port'),
+        'MAIL_USERNAME'    => config('mail.mailers.smtp.username'),
+        'MAIL_ENCRYPTION'  => config('mail.mailers.smtp.encryption'),
+        'MAIL_FROM'        => config('mail.from.address'),
+        'QUEUE_CONNECTION' => config('queue.default'),
+        'SESSION_DRIVER'   => config('session.driver'),
+        'CACHE_STORE'      => config('cache.default'),
+        'APP_URL'          => config('app.url'),
+        'APP_ENV'          => config('app.env'),
+    ];
+
+    // Coba kirim email test
+    try {
+        \Illuminate\Support\Facades\Mail::raw(
+            'Test email dari debug-mail route di Railway.',
+            function ($msg) {
+                $msg->to('muhammad.aufa2018@gmail.com')->subject('[DEBUG] Test Railway Mail');
+            }
+        );
+        $info['mail_test'] = 'SUCCESS - Email terkirim!';
+    } catch (\Exception $e) {
+        $info['mail_test'] = 'FAILED: ' . $e->getMessage();
+    }
+
+    // Coba proses password reset
+    try {
+        $status = \Illuminate\Support\Facades\Password::sendResetLink(
+            ['email' => 'muhammad.aufa2018@gmail.com']
+        );
+        $info['reset_link_test'] = $status;
+    } catch (\Exception $e) {
+        $info['reset_link_test'] = 'FAILED: ' . $e->getMessage();
+    }
+
+    return response()->json($info, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+});
 // ==========================================
 
 
