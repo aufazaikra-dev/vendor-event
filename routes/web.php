@@ -63,10 +63,6 @@ Route::get('/seed-dummy-data', function () {
             '--force' => true,
         ]);
         
-        \Artisan::call('db:seed', [
-            '--class' => 'DummyTransactionSeeder',
-            '--force' => true,
-        ]);
         return response()->json([
             'status'  => 'SUCCESS',
             'message' => 'Data dummy vendor dan pelanggan berhasil di-seed!',
@@ -77,6 +73,22 @@ Route::get('/seed-dummy-data', function () {
             'status'  => 'ERROR',
             'message' => $e->getMessage(),
         ], 500);
+    }
+});
+
+Route::get('/seed-transactions', function () {
+    try {
+        \Artisan::call('db:seed', [
+            '--class' => 'DummyTransactionSeeder',
+            '--force' => true,
+        ]);
+        return response()->json([
+            'status'  => 'SUCCESS',
+            'message' => 'Data dummy transaksi dan ulasan berhasil ditambahkan pada vendor aktif!',
+            'output'  => \Artisan::output(),
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'ERROR', 'message' => $e->getMessage()]);
     }
 });
 
