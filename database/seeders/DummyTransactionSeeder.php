@@ -99,11 +99,19 @@ class DummyTransactionSeeder extends Seeder
                             ? $faker->randomElement($ulasanPositif) 
                             : $faker->randomElement($ulasanSedang);
 
+                // 30% kemungkinan vendor membalas ulasan
+                $balasan = null;
+                if (rand(1, 10) <= 3) {
+                    $balasan = 'Terima kasih banyak atas ulasannya! Kami selalu berusaha memberikan yang terbaik untuk acara Anda. Semoga sukses selalu!';
+                }
+
                 Review::create([
                     'vendor_id' => $vendor->id,
                     'user_id' => $customer->id,
+                    'transaction_id' => $transaction->id,
                     'rating' => $rating,
                     'komentar' => $komentar,
+                    'balasan_vendor' => $balasan,
                     'created_at' => $transaction->updated_at,
                     'updated_at' => $transaction->updated_at,
                 ]);

@@ -62,6 +62,11 @@ Route::get('/seed-dummy-data', function () {
             '--class' => 'VendorAndCustomerSeeder',
             '--force' => true,
         ]);
+        
+        \Artisan::call('db:seed', [
+            '--class' => 'DummyTransactionSeeder',
+            '--force' => true,
+        ]);
         return response()->json([
             'status'  => 'SUCCESS',
             'message' => 'Data dummy vendor dan pelanggan berhasil di-seed!',
