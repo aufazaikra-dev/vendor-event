@@ -12,6 +12,9 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         body { font-family: 'Inter', sans-serif; }
 
@@ -206,5 +209,50 @@
 
     </div>
 </div>
+
+<!-- SweetAlert Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Success notification for password update
+        @if (session('status') === 'password-updated')
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Password Anda telah berhasil diubah.',
+                confirmButtonColor: '#B8860B'
+            });
+        @endif
+
+        // Success notification for profile info update
+        @if (session('status') === 'profile-updated')
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Informasi profil Anda telah diperbarui.',
+                confirmButtonColor: '#B8860B'
+            });
+        @endif
+
+        // Error notification if validation fails in any form
+        @if ($errors->any() || $errors->updatePassword->any() || $errors->userDeletion->any())
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal Menyimpan',
+                html: '<ul style="text-align: left; list-style-type: disc; margin-left: 20px;">' +
+                      @foreach ($errors->all() as $error)
+                          '<li>{{ $error }}</li>' +
+                      @endforeach
+                      @foreach ($errors->updatePassword->all() as $error)
+                          '<li>{{ $error }}</li>' +
+                      @endforeach
+                      @foreach ($errors->userDeletion->all() as $error)
+                          '<li>{{ $error }}</li>' +
+                      @endforeach
+                      '</ul>',
+                confirmButtonColor: '#B8860B'
+            });
+        @endif
+    });
+</script>
 </body>
 </html>

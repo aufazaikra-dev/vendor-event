@@ -72,7 +72,7 @@
     <!-- Navbar Premium Sticky -->
     <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm py-3 md:py-4 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-            <a href="/" class="text-base md:text-3xl font-serif font-bold text-gold-600 flex items-center gap-1 md:gap-2">
+            <a href="javascript:void(0);" onclick="if(document.referrer.includes(window.location.host)) { history.back(); } else { window.location.href='/'; }" class="text-base md:text-3xl font-serif font-bold text-gold-600 flex items-center gap-1 md:gap-2">
                 <svg class="w-5 h-5 md:w-8 md:h-8 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 Kembali
             </a>
