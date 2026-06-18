@@ -165,7 +165,10 @@
                             @foreach($photos as $foto)
                             <div class="porto-card">
                                 <div class="porto-img">
-                                    <img src="{{ asset('storage/' . $foto->cover_image) }}" alt="{{ $foto->judul_project }}">
+                                    @php
+                                        $cover = str_starts_with($foto->cover_image, 'http') ? $foto->cover_image : asset('storage/' . $foto->cover_image);
+                                    @endphp
+                                    <img src="{{ $cover }}" alt="{{ $foto->judul_project }}">
                                     <div class="porto-overlay">
                                         <span class="text-white font-bold text-sm">{{ $foto->judul_project }}</span>
                                     </div>

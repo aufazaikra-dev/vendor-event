@@ -92,6 +92,22 @@ Route::get('/seed-transactions', function () {
     }
 });
 
+Route::get('/seed-portfolio', function () {
+    try {
+        \Artisan::call('db:seed', [
+            '--class' => 'DummyPortfolioSeeder',
+            '--force' => true,
+        ]);
+        return response()->json([
+            'status'  => 'SUCCESS',
+            'message' => 'Data dummy portofolio (gambar) berhasil ditambahkan pada vendor aktif!',
+            'output'  => \Artisan::output(),
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'ERROR', 'message' => $e->getMessage()]);
+    }
+});
+
 Route::get('/list-vendor-credentials', function () {
     $vendors = \Illuminate\Support\Facades\DB::table('users')
         ->where('role', 'vendor')

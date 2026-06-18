@@ -92,17 +92,48 @@
                 <form action="/" method="GET">
                     <input type="hidden" name="cari" value="yes">
 
-                    <!-- Baris 1: Filter Data (Font Label diperbesar) -->
+                    <!-- Baris 1: Filter Data -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div>
-                            <label class="block text-white text-base md:text-lg font-medium mb-3 tracking-wide">Kategori Jasa</label>
-                            <select name="kategori" class="w-full rounded-xl border-0 bg-white/90 focus:ring-2 focus:ring-gold-500 text-charcoal text-base py-4 px-5 shadow-inner">
-                                <option value="">Semua Kategori</option>
+                        <!-- Kategori Jasa - Dropdown Multi Select (Alpine.js) -->
+                        <div x-data="{ open: false, selectedCount: 0 }" 
+                             x-init="selectedCount = $el.querySelectorAll('input:checked').length"
+                             class="relative">
+                            <label class="block text-white text-base md:text-lg font-medium mb-3 tracking-wide">
+                                Kategori Jasa
+                            </label>
+                            
+                            <!-- Trigger Dropdown -->
+                            <div @click="open = !open" 
+                                 class="w-full rounded-xl border-0 bg-white/90 text-charcoal text-base py-4 px-5 shadow-inner cursor-pointer flex justify-between items-center ring-offset-2 focus-within:ring-2 focus-within:ring-gold-500">
+                                <span class="truncate" x-text="selectedCount > 0 ? selectedCount + ' Kategori Dipilih' : 'Semua Kategori'">Semua Kategori</span>
+                                <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" :class="open ? 'transform rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+
+                            <!-- Isi Dropdown -->
+                            <div x-show="open" 
+                                 @click.away="open = false" 
+                                 x-transition.opacity.duration.200ms
+                                 style="display: none;"
+                                 class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-xl border border-gray-100 p-2 flex flex-col max-h-60 overflow-y-auto">
+                                
                                 @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}" {{ (isset($old_input['kategori']) && $old_input['kategori'] == $cat->id) ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                    @php
+                                        $isChecked = isset($old_input['kategori']) && in_array($cat->id, (array) $old_input['kategori']);
+                                    @endphp
+                                    <label class="flex items-center gap-3 p-3 hover:bg-amber-50 rounded-lg cursor-pointer transition-colors">
+                                        <input type="checkbox" 
+                                               name="kategori[]" 
+                                               value="{{ $cat->id }}" 
+                                               class="w-5 h-5 text-gold-500 border-gray-300 rounded focus:ring-gold-500" 
+                                               {{ $isChecked ? 'checked' : '' }}
+                                               @change="selectedCount = $el.closest('div[x-data]').querySelectorAll('input:checked').length">
+                                        <span class="text-charcoal font-medium">{{ $cat->name }}</span>
+                                    </label>
                                 @endforeach
-                            </select>
+                            </div>
                         </div>
+
+                        <!-- Kecamatan -->
                         <div>
                             <label class="block text-white text-base md:text-lg font-medium mb-3 tracking-wide">Kecamatan (Banda Aceh)</label>
                             <select name="kecamatan" class="w-full rounded-xl border-0 bg-white/90 focus:ring-2 focus:ring-gold-500 text-charcoal text-base py-4 px-5 shadow-inner">
@@ -112,10 +143,13 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <!-- Budget Max -->
                         <div>
                             <label class="block text-white text-base md:text-lg font-medium mb-3 tracking-wide">Budget Max (Rp)</label>
                             <input type="number" name="max_budget" class="w-full rounded-xl border-0 bg-white/90 focus:ring-2 focus:ring-gold-500 text-charcoal text-base py-4 px-5 shadow-inner" placeholder="Contoh: 5000000" value="{{ $old_input['max_budget'] ?? '' }}">
                         </div>
+
                     </div>
 
                     <div class="border-t border-white/20 pt-8 mb-6">
@@ -292,7 +326,14 @@
                                 </div>
 
                                 @php
-                                    $cover = $item->data->projects->first() ? asset('storage/'.$item->data->projects->first()->cover_image) : 'https://via.placeholder.com/400x250?text=Belum+Ada+Foto';
+                                    $project = $item->data->projects->first();
+                                    if ($project) {
+                                        $cover = str_starts_with($project->cover_image, 'http') 
+                                            ? $project->cover_image 
+                                            : asset('storage/' . $project->cover_image);
+                                    } else {
+                                        $cover = 'https://via.placeholder.com/400x250?text=Belum+Ada+Foto';
+                                    }
                                 @endphp
                                 <img src="{{ $cover }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Cover">
 

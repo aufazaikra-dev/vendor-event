@@ -28,7 +28,10 @@
             <div class="adm-card h-100" style="overflow:hidden;">
                 <!-- Foto -->
                 <div style="position:relative;overflow:hidden;">
-                    <img src="{{ asset('storage/' . $item->cover_image) }}"
+                    @php
+                        $cover = str_starts_with($item->cover_image, 'http') ? $item->cover_image : asset('storage/' . $item->cover_image);
+                    @endphp
+                    <img src="{{ $cover }}"
                          alt="{{ $item->judul_project }}"
                          style="width:100%;height:210px;object-fit:cover;transition:transform 0.3s ease;"
                          onmouseover="this.style.transform='scale(1.05)'"

@@ -61,7 +61,12 @@ class SawService
         }
 
         if ($request->filled('kategori')) {
-            $query->where('category_id', (int) $request->input('kategori'));
+            $kategori = $request->input('kategori');
+            if (is_array($kategori)) {
+                $query->whereIn('category_id', $kategori);
+            } else {
+                $query->where('category_id', (int) $kategori);
+            }
         }
 
         if ($request->filled('kecamatan')) {
