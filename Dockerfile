@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libzip-dev \
     libicu-dev \
+    libssl-dev \
     zip \
     unzip \
     && docker-php-ext-install \
@@ -45,10 +46,10 @@ RUN composer dump-autoload --optimize
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Expose port (Render sets $PORT dynamically)
+# Expose port (Koyeb uses $PORT dynamically, default 8000)
 EXPOSE 8000
 
-# Start command
+# Start command - runs on every deploy
 CMD php artisan config:clear \
     && php artisan config:cache \
     && php artisan route:clear \
