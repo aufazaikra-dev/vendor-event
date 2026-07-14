@@ -46,15 +46,13 @@ RUN composer dump-autoload --optimize
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
+# Copy and set executable startup script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 # Expose port 8080 (Back4App default)
 EXPOSE 8080
 
-# Start command
-CMD php artisan config:clear \
-    && php artisan config:cache \
-    && php artisan route:clear \
-    && php artisan route:cache \
-    && php artisan migrate --force \
-    && php artisan db:seed --class=AdminSeeder --force \
-    && php artisan storage:link \
-    && php artisan serve --host=0.0.0.0 --port=8080
+# Start via script (server always runs even if artisan commands fail)
+CMD ["/start.sh"]
+
