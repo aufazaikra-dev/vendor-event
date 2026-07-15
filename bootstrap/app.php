@@ -11,7 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Trust Railway's reverse proxy (required for HTTPS session cookies to work)
+        // Trust reverse proxy headers (required for HTTPS session cookies to work on Back4App/cloud)
         $middleware->trustProxies(at: '*');
 
         $middleware->alias([
