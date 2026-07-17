@@ -49,6 +49,13 @@ class DummyPortfolioSeeder extends Seeder
                 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=80',
                 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&q=80',
             ],
+            'Venue/Gedung' => [
+                'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&q=80',
+                'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80',
+                'https://images.unsplash.com/photo-1478147427282-58a87a433469?w=600&q=80',
+                'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=600&q=80',
+                'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80',
+            ],
         ];
 
         // Ambil semua vendor aktif
