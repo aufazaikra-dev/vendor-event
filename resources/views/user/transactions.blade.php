@@ -251,11 +251,6 @@
 
             <!-- Stats Bar -->
             <div class="fade-in-up delay-1 flex flex-wrap gap-3 mb-8">
-                @php
-                    $totalPesanan   = $transactions->count();
-                    $totalSelesai   = $transactions->where('status', 'selesai')->count();
-                    $totalBerjalan  = $transactions->where('status', '!=', 'selesai')->count();
-                @endphp
                 <div class="stat-chip">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
@@ -433,6 +428,14 @@
                 @endforelse
 
             </div>
+
+            {{-- Pagination Links --}}
+            @if($transactions->hasPages())
+                <div class="fade-in-up mt-10 flex justify-center" style="--tw-text-opacity:1;">
+                    {{ $transactions->links() }}
+                </div>
+            @endif
+
         </div>
     </div>
 

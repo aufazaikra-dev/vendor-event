@@ -45,8 +45,12 @@ class AdminController extends Controller
     // 3. Data Pelanggan (User) & Riwayat Transaksi
     public function users()
     {
-        // Ambil user biasa beserta transaksi dan vendor yang pernah dipakai
-        $users = User::with(['transactions.vendor'])->where('role', 'user')->latest()->get();
+        // Ambil user biasa dengan paginate agar lebih ringan
+        $users = User::with(['transactions.vendor', 'transactions.pricelist'])
+            ->withCount('transactions')
+            ->where('role', 'user')
+            ->latest()
+            ->paginate(10);
         return view('admin.users', compact('users'));
     }
 }

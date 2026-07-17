@@ -56,8 +56,19 @@ class TransactionController extends Controller
     // ================= SISI PELANGGAN (USER) =================
     public function userIndex()
     {
-        // Ambil riwayat pesanan milik user yang sedang login
-        $transactions = Transaction::with(['vendor', 'pricelist', 'review'])->where('user_id', auth()->id())->latest()->get();
-        return view('user.transactions', compact('transactions'));
+        $userId = auth()->id();
+
+        // Hitung stats dari semua data (bukan dari paginator)
+        $totalPesanan  = Transaction::where('user_id', $userId)->count();
+        $totalSelesai  = Transaction::where('user_id', $userId)->where('status', 'selesai')->count();
+        $totalBerjalan = Transaction::where('user_id', $userId)->where('status', '!=', 'selesai')->count();
+
+        // Ambil riwayat pesanan dengan pagination (6 per halaman)
+        $transactions = Transaction::with(['vendor', 'pricelist', 'review'])
+            ->where('user_id', $userId)
+            ->latest()
+            ->paginate(6);
+
+        return view('user.transactions', compact('transactions', 'totalPesanan', 'totalSelesai', 'totalBerjalan'));
     }
 }

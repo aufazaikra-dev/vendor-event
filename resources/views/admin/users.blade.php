@@ -10,7 +10,7 @@
 <div class="adm-card">
     <div class="adm-card-header">
         <span class="adm-card-title">Daftar Pelanggan</span>
-        <span class="adm-badge adm-badge-blue">{{ $users->count() }} pelanggan</span>
+        <span class="adm-badge adm-badge-blue">{{ $users->total() }} pelanggan</span>
     </div>
     <div style="overflow-x: auto;">
         <table class="adm-table">
@@ -26,7 +26,7 @@
             <tbody>
                 @forelse($users as $i => $user)
                 <tr>
-                    <td style="color:#9a9ab0; font-size:13px;">{{ $i + 1 }}</td>
+                    <td style="color:#9a9ab0; font-size:13px;">{{ $users->firstItem() + $i }}</td>
                     <td>
                         <div style="display:flex; align-items:center; gap:10px;">
                             <div style="width:34px; height:34px; border-radius:50%; background:rgba(184,134,11,0.1); border:1px solid rgba(184,134,11,0.2); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#B8860B; flex-shrink:0;">
@@ -42,9 +42,9 @@
                         </span>
                     </td>
                     <td>
-                        @if($user->transactions->count() > 0)
+                        @if($user->transactions_count > 0)
                             <div style="display:flex; flex-direction:column; gap:6px;">
-                                @foreach($user->transactions as $trx)
+                                @foreach($user->transactions->take(3) as $trx)
                                     <div style="display:flex; align-items:center; gap:8px; padding:8px 10px; background:#F8F6F0; border-radius:8px; border:1px solid rgba(184,134,11,0.1);">
                                         <div style="flex:1; min-width:0;">
                                             <div style="font-weight:600; color:#1a1a2e; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
@@ -59,6 +59,11 @@
                                         </span>
                                     </div>
                                 @endforeach
+                                @if($user->transactions_count > 3)
+                                    <div style="font-size:12px; color:#9a9ab0; font-style:italic; padding: 4px 10px;">
+                                        ... dan {{ $user->transactions_count - 3 }} transaksi lainnya
+                                    </div>
+                                @endif
                             </div>
                         @else
                             <span style="font-size:14px; color:#9a9ab0; font-style:italic;">Belum pernah menggunakan jasa vendor.</span>
@@ -78,6 +83,14 @@
             </tbody>
         </table>
     </div>
+
+    {{-- Pagination --}}
+    @if($users->hasPages())
+        <div style="margin-top: 24px; display:flex; justify-content:center;">
+            {{ $users->links() }}
+        </div>
+    @endif
+
 </div>
 
 @endsection
