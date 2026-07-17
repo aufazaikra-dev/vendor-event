@@ -85,11 +85,9 @@
     </div>
 
     {{-- Pagination --}}
-    @if($users->hasPages())
-        <div style="margin-top: 24px; display:flex; justify-content:center;">
-            {{ $users->links() }}
-        </div>
-    @endif
+    <div style="margin-top: 24px; padding: 8px 0;">
+        {{ $users->links('vendor.pagination.custom') }}
+    </div>
 
 </div>
 

@@ -430,11 +430,9 @@
             </div>
 
             {{-- Pagination Links --}}
-            @if($transactions->hasPages())
-                <div class="fade-in-up mt-10 flex justify-center" style="--tw-text-opacity:1;">
-                    {{ $transactions->links() }}
-                </div>
-            @endif
+            <div class="fade-in-up mt-10">
+                {{ $transactions->links('vendor.pagination.custom') }}
+            </div>
 
         </div>
     </div>
