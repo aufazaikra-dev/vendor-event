@@ -51,7 +51,7 @@ class DummyPortfolioSeeder extends Seeder
                 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&h=600&fit=crop',
                 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=800&h=600&fit=crop',
                 'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=800&h=600&fit=crop',
-                'https://images.unsplash.com/photo-1598387993281-b6c3e5e2e5c3?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop',
             ],
             'MC' => [
                 'https://images.unsplash.com/photo-1560523159-4a9692d222f9?w=800&h=600&fit=crop',
@@ -61,11 +61,11 @@ class DummyPortfolioSeeder extends Seeder
                 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&h=600&fit=crop',
             ],
             'Venue/Gedung' => [
-                'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&q=80',
-                'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80',
-                'https://images.unsplash.com/photo-1478147427282-58a87a433469?w=600&q=80',
-                'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=600&q=80',
-                'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80',
+                'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1478147427282-58a87a433469?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop',
             ],
         ];
 
