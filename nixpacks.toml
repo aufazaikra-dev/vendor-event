@@ -1,0 +1,12 @@
+# nixpacks.toml — Railway build configuration untuk Laravel
+# Dokumentasi: https://nixpacks.com/docs/configuration/file
+
+[phases.build]
+cmds = [
+    "composer install --no-dev --optimize-autoloader",
+    "npm ci && npm run build",
+    "chmod +x railway-start.sh"
+]
+
+[start]
+cmd = "bash railway-start.sh"

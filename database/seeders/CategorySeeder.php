@@ -16,7 +16,8 @@ class CategorySeeder extends Seeder
             'Makeup Artist (MUA)',
             'Fotografer',
             'Hiburan (Band/DJ)',
-            'MC'
+            'MC',
+            'Venue/Gedung'
         ];
 
         foreach ($categories as $category) {

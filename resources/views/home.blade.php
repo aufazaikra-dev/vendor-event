@@ -159,7 +159,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <!-- Harga -->
                             <div class="text-center bg-white/5 p-5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-                                <label class="block text-gold-400 font-semibold text-lg mb-2">Prioritas Harga</label>
+                                <label class="block text-gold-400 font-semibold text-lg mb-2">Harga</label>
                                 <div class="flex justify-center mb-3">
                                     <span id="val_harga"
                                           class="inline-block min-w-[56px] text-center text-2xl font-extrabold px-3 py-1 rounded-full"
@@ -172,12 +172,12 @@
                                        class="w-full accent-gold-500 mb-3 cursor-pointer"
                                        value="{{ $old_input['bobot_harga'] ?? 50 }}"
                                        oninput="document.getElementById('val_harga').textContent = this.value + '%'">
-                                <span class="text-sm text-gray-300 block">Geser kanan untuk harga terendah</span>
+                                <span class="text-sm text-gray-300 block">Harga termurah</span>
                             </div>
 
                             <!-- Rating -->
                             <div class="text-center bg-white/5 p-5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-                                <label class="block text-gold-400 font-semibold text-lg mb-2">Prioritas Rating</label>
+                                <label class="block text-gold-400 font-semibold text-lg mb-2">Rating</label>
                                 <div class="flex justify-center mb-3">
                                     <span id="val_rating"
                                           class="inline-block min-w-[56px] text-center text-2xl font-extrabold px-3 py-1 rounded-full"
@@ -190,12 +190,12 @@
                                        class="w-full accent-gold-500 mb-3 cursor-pointer"
                                        value="{{ $old_input['bobot_rating'] ?? 30 }}"
                                        oninput="document.getElementById('val_rating').textContent = this.value + '%'">
-                                <span class="text-sm text-gray-300 block">Geser kanan untuk ulasan terbaik</span>
+                                <span class="text-sm text-gray-300 block">Rating pelanggan tertinggi</span>
                             </div>
 
                             <!-- Pengalaman -->
                             <div class="text-center bg-white/5 p-5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-                                <label class="block text-gold-400 font-semibold text-lg mb-2">Prioritas Pengalaman</label>
+                                <label class="block text-gold-400 font-semibold text-lg mb-2">Pengalaman</label>
                                 <div class="flex justify-center mb-3">
                                     <span id="val_pengalaman"
                                           class="inline-block min-w-[56px] text-center text-2xl font-extrabold px-3 py-1 rounded-full"
@@ -208,7 +208,7 @@
                                        class="w-full accent-gold-500 mb-3 cursor-pointer"
                                        value="{{ $old_input['bobot_pengalaman'] ?? 20 }}"
                                        oninput="document.getElementById('val_pengalaman').textContent = this.value + '%'">
-                                <span class="text-sm text-gray-300 block">Geser kanan untuk jam terbang tertinggi</span>
+                                <span class="text-sm text-gray-300 block">Transaksi selesai terbanyak</span>
                             </div>
                         </div>
 
